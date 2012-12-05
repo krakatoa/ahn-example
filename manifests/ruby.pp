@@ -74,19 +74,6 @@ class ruby {
       refreshonly => true
     }
     
-    exec { "rbenv::compile ${user} ${ruby}":
-      command     => "rbenv install ${ruby}", # && touch ${root_path}/.rehash",
-      # timeout     => 0,
-      #user        => $user,
-      #group       => $group,
-      # environment => [ "HOME=${home_path}" ],
-      #creates     => "${versions}/${ruby}",
-      path        => ["/usr/local/rbenv/bin"],
-      subscribe      => Exec["source rbenv.sh"],
-      refreshonly => true
-    }
-
-
     #file { '/etc/profile.d/rbenv.sh':
     #  ensure    => file,
     #  content   => template('rbenv/rbenv.sh'),

@@ -53,9 +53,9 @@ class rbenv {
                     ${rbenv::params::repo_path} \
                     ${rbenv::params::install_dir}",
       path      => ["/usr/bin", $prefix],
-      creates   => $rbenv::params::install_dir #,
-      #alias => "git clone rbenv",
-      #notify => File['/etc/profile.d/rbenv.sh']
+      creates   => $rbenv::params::install_dir,
+      notify => File['/etc/profile.d/rbenv.sh'],
+      before => File['/etc/profile.d/rbenv.sh']
     }
   
     file { [
@@ -67,15 +67,16 @@ class rbenv {
       ensure    => directory,
       owner     => 'root',
       group     => 'root',
-      mode      => '0775',
+      mode      => '0775'
     }
   
     file { '/etc/profile.d/rbenv.sh':
       ensure    => file,
       content   => template("${build_dir}/rbenv.sh.erb"),
       mode      => '0775',
+      require   => Exec["git clone ${rbenv::params::repo_name}"],
       notify    => Exec["source rbenv.sh"],
-      subscribe => Exec["git clone rbenv"]
+      subscribe => Exec["git clone ${rbenv::params::repo_name}"]
     }
   
     exec { "source rbenv.sh":
@@ -89,7 +90,7 @@ class rbenv {
     }
     
   
-    Exec["git clone ${rbenv::params::repo_name}"] -> File['/usr/local/rbenv']
+    #Exec["git clone ${rbenv::params::repo_name}"] -> File['/usr/local/rbenv/bin/rbenv']
   
   }
 
