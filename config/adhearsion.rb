@@ -38,9 +38,9 @@ Adhearsion.config do |config|
   ##
   # Use with FreeSWITCH
   #
-  # config.punchblock.platform = :freeswitch # Use FreeSWITCH
-  # config.punchblock.password = "" # Your Inbound EventSocket password
-  # config.punchblock.host = "127.0.0.1" # Your IES host
+  config.punchblock.platform = :freeswitch # Use FreeSWITCH
+  config.punchblock.password = "ClueCon" # Your Inbound EventSocket password
+  config.punchblock.host = "127.0.0.1" # Your IES host
 end
 
 Adhearsion::Events.draw do
@@ -48,9 +48,9 @@ Adhearsion::Events.draw do
   # Register global handlers for events
   #
   # eg. Handling Punchblock events
-  # punchblock do |event|
-  #   ...
-  # end
+  punchblock do |event|
+    logger.info event.inspect
+  end
   #
   # eg Handling PeerStatus AMI events
   # ami :name => 'PeerStatus' do |event|
@@ -65,5 +65,5 @@ Adhearsion.router do
   # Specify your call routes, directing calls with particular attributes to a controller
   #
 
-  route 'default', SimonGame
+  route 'default', IvrTesting
 end
