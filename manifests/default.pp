@@ -23,11 +23,6 @@ class ivr {
     group  => $rbenv_group
   }
   
-  # rbenv::setup { "rbenv-setup-wide":
-  #   prefix => $rbenv_prefix,
-  #   profile_path => $profile_path_wide
-  # }
-
   ruby::setup { "ruby-setup":
   }
 

@@ -39,19 +39,6 @@ class IvrTesting < Adhearsion::CallController
               to = to.to_i if to
               logger.info "from #{from} to #{to}"
                 
-                #from = 1
-                #to = 7
-                #match from..to do |lamb|
-                #  logger.info "Play: #{lamb}"
-                #  hangup
-                #end
-                #
-                #from = 8
-                #to = 9
-                #match from..to do
-                #  logger.info "Hangup!"
-                #  hangup
-                #end
               match from..to do |lamb|
                 logger.info "matched: #{lamb} value: #{v}"
                 v.each do |action|
@@ -67,29 +54,14 @@ class IvrTesting < Adhearsion::CallController
               end
             }
 
-    #        timeout {
-    #          logger.info "Testing timeout"
-    #          hangup
-    #        }
+            timeout {
+              logger.info "Testing timeout"
+              hangup
+            }
           end
       end
     end
 
-    #menu :timeout => 8.seconds do
-    #  match 1..8 do |dialed|
-    #    logger.info dialed
-    #  end
-    #
-    #  match 9 do
-    #    hangup
-    #  end
-
-    #  timeout {
-    #    logger.info "test"
-    #    hangup
-    #  }
-
-    #end
   end
 
 end

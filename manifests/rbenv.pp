@@ -29,12 +29,6 @@ class rbenv {
         exec { "/bin/grep -vFx '${line}' '${file}' | /usr/bin/tee '${file}' > /dev/null 2>&1":
           onlyif => "/bin/grep -qFx '${line}' '${file}'"
         }
-
-        # Use this resource instead if your platform's grep doesn't support -vFx;
-        # note that this command has been known to have problems with lines containing quotes.
-        # exec { "/usr/bin/perl -ni -e 'print unless /^\\Q${line}\\E\$/' '${file}'":
-        #     onlyif => "/bin/grep -qFx '${line}' '${file}'"
-        # }
       }
     }
   }
@@ -80,26 +74,14 @@ class rbenv {
       groups => $group
     }
   
-    # file { '/etc/profile.d/rbenv.sh':
-    #   ensure    => file,
-    #   content   => template("${build_dir}/rbenv.sh.erb"),
-    #   mode      => '0775',
-    #   #require   => Exec["git clone ${rbenv::params::repo_name}"],
-    #   #notify    => Line["source rbenv.sh"],
-    #   subscribe => Exec["git clone ${rbenv::params::repo_name}"]
-    # }
-
     line { "source lines ${profile_path}":
       file => $profile_path,
       line => template("${build_dir}/rbenv.sh.erb")
-      #line => "source /etc/profile.d/rbenv.sh"
     }
   
     exec { "source ${profile_path}":
       command => "zsh -c 'source ${profile_path}'",
-      path => ["/bin", "/usr/bin", "/usr/local/bin"] #,
-      #subscribe => File["/etc/profile.d/rbenv.sh"],
-      #refreshonly => true
+      path => ["/bin", "/usr/bin", "/usr/local/bin"],
     }
 
     Line["source lines ${profile_path}"] -> Exec["source ${profile_path}"]
@@ -117,8 +99,6 @@ class rbenv {
       environment => [ "HOME=/usr/local/rbenv"],
       #creates     => "${versions}/${ruby}",
       path        => ["/bin", "/usr/bin", "/usr/local/bin", "/usr/local/rbenv/bin"]
-      #subscribe      => Exec["source rbenv.sh"],
-      #refreshonly => true
     }
 
     #exec { "rbenv::rehash ${user} ${ruby}":
