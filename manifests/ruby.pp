@@ -13,6 +13,29 @@ class ruby {
 
   define setup() {
 
+    package {
+      "build-essential":
+        ensure => present;
+      "libssl-dev":
+        ensure => present;
+      "libreadline6":
+        ensure => present;
+      "libreadline6-dev":
+        ensure => present;
+      "zlib1g":
+        ensure => present;
+      "zlib1g-dev":
+        ensure => present;
+      "curl":
+        ensure => present;
+      "libcurl4-openssl-dev":
+        ensure => present;
+      "libxslt-dev":
+        ensure => present;
+      "libxml2-dev":
+        ensure => present;
+    }
+
     exec { "git clone ${ruby::params::repo_name}":
       command   => "/usr/bin/git clone \
                     ${ruby::params::repo_path} \
@@ -37,15 +60,21 @@ class ruby {
     exec { 'install-ruby-build':
       cwd     => $ruby::params::install_dir,
       command => "${ruby::params::install_dir}/install.sh",
-      refreshonly => true
+      refreshonly => true,
+      require => [
+        Package["build-essential"],
+        Package["libssl-dev"],
+        Package["libreadline6"],
+        Package["libreadline6-dev"],
+        Package["zlib1g"],
+        Package["zlib1g-dev"],
+        Package["curl"],
+        Package["libcurl4-openssl-dev"],
+        Package["libxslt-dev"],
+        Package["libxml2-dev"]
+      ]
     }
     
-    #file { '/etc/profile.d/rbenv.sh':
-    #  ensure    => file,
-    #  content   => template('rbenv/rbenv.sh'),
-    #  mode      => '0775'
-    #}
-
     Exec["git clone ${ruby::params::repo_name}"] -> File['/usr/local/ruby-build']
   
   }

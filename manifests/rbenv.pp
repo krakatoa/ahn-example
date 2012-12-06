@@ -3,9 +3,6 @@
 # Fernando Alonso <fedario@gmail.com>, Brendan O'Donnell <brendan.james.odonnell@gmail.com>
 #
 class rbenv::params {
-
-  #$user               = ''
-  #$group              = 'rbenv'
   $repo_path          = 'git://github.com/sstephenson/rbenv.git'
   $repo_name          = 'rbenv'
   $install_prefix     = '/usr/local'
@@ -97,21 +94,11 @@ class rbenv {
     }
 
     exec { "rbenv global ${ruby_version}":
-      command => "rbenv global ${ruby_version}",
+      command => "rbenv global ${ruby_version} && rbenv rehash",
       user    => $user,
       environment => ["HOME=/home/vagrant", "RBENV_ROOT=/usr/local/rbenv"],
       path => ["/bin", "/usr/bin", "/usr/local/bin", "/usr/local/rbenv/bin"]
     }
-
-    #exec { "rbenv::rehash ${user} ${ruby}":
-    #  command     => "rbenv rehash && rm -f ${root_path}/.rehash",
-    #  user        => $user,
-    #  group       => $group,
-    #  cwd         => $home_path,
-    #  onlyif      => "[ -e '${root_path}/.rehash' ]",
-    #  environment => [ "HOME=${home_path}" ],
-    #  path        => $path,
-    #}
     
     Exec["source ${profile_path}"] -> Exec["rbenv global ${ruby_version}"]
 

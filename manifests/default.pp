@@ -12,6 +12,11 @@ class ivr {
   include rbenv
   include ruby
 
+  package {
+    "git-core":
+      ensure => present;
+  }
+
   rbenv::download { "rbenv-download": 
     prefix => $rbenv_prefix
   }
