@@ -4,7 +4,7 @@ $rbenv_prefix = "/usr/local/"
 $ruby_version = "1.9.3-p194"
 $user         = "vagrant"
 $rbenv_group  = "rbenv"
-$profile_path_wide = "/etc/zsh/zshenv"
+# $profile_path = "/etc/zsh/zshenv"
 $profile_path = "/home/vagrant/.zshrc"
 
 class ivr {

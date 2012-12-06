@@ -49,7 +49,7 @@ class rbenv {
     
     file { "${rbenv::params::install_dir}":
       group => $group,
-      mode => 774,
+      mode => 775,
       recurse => true
     }
   
@@ -71,7 +71,8 @@ class rbenv {
 
     user { "set user rbenv group ${group}":
       name => $user,
-      groups => $group
+      groups => $group,
+      shell => "/bin/zsh"
     }
   
     line { "source lines ${profile_path}":
@@ -79,26 +80,27 @@ class rbenv {
       line => template("${build_dir}/rbenv.sh.erb")
     }
   
-    exec { "source ${profile_path}":
-      command => "zsh -c 'source ${profile_path}'",
-      path => ["/bin", "/usr/bin", "/usr/local/bin"],
-    }
-
     Line["source lines ${profile_path}"] -> Exec["source ${profile_path}"]
     
   }
 
   define install($ruby_version, $user, $group) {
+    
+    exec { "source ${profile_path}":
+      command => "zsh -c 'source ${profile_path}' && rbenv install ${ruby_version}",
+      cwd     => "/home/vagrant",
+      user    => $user,
+      logoutput => true,
+      timeout => 0,
+      environment => ["HOME=/home/vagrant", "RBENV_ROOT=/usr/local/rbenv"],
+      path => ["/bin", "/usr/bin", "/usr/local/bin", "/usr/local/rbenv/bin"]
+    }
 
-    exec { "rbenv::compile ${user} ${ruby_version}":
-      command     => "rbenv install ${ruby_version}", # && touch ${root_path}/.rehash",
-      timeout     => 0,
-      user        => "root",
-      group       => $group,
-      #environment => [ "HOME=/home/vagrant" ],
-      environment => [ "HOME=/usr/local/rbenv"],
-      #creates     => "${versions}/${ruby}",
-      path        => ["/bin", "/usr/bin", "/usr/local/bin", "/usr/local/rbenv/bin"]
+    exec { "rbenv global ${ruby_version}":
+      command => "rbenv global ${ruby_version}",
+      user    => $user,
+      environment => ["HOME=/home/vagrant", "RBENV_ROOT=/usr/local/rbenv"],
+      path => ["/bin", "/usr/bin", "/usr/local/bin", "/usr/local/rbenv/bin"]
     }
 
     #exec { "rbenv::rehash ${user} ${ruby}":
@@ -110,6 +112,8 @@ class rbenv {
     #  environment => [ "HOME=${home_path}" ],
     #  path        => $path,
     #}
+    
+    Exec["source ${profile_path}"] -> Exec["rbenv global ${ruby_version}"]
 
   }
 }
