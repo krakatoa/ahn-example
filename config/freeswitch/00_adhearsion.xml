@@ -1,0 +1,8 @@
+<include>
+  <extension name="adhearsion">
+    <condition>
+      <action application='park' />
+      <action application="socket" data="127.0.0.1:8021 async" />
+    </condition>
+  </extension>
+</include>
