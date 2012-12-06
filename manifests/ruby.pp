@@ -1,37 +1,3 @@
-# == Class: rbenv
-#
-# Install rbenv.
-#
-# === Parameters
-#
-# $rbenv::params::repo_path
-#   The repository to clone from
-#   Defaults to 'git://github.com/sstephenson/rbenv.git'
-# $rbenv::params::repo_name
-#   The name of the new local directory to clone into
-#   Defaults to 'rbenv'
-# $rbenv::params::install_prefix
-#   The name of the existing parent directory to clone into
-#   Defaults to '/usr/local'
-# $rbenv::params::install_dir
-#   The full path to the newly created directory
-#   Defaults to $install_prefix/$repo_name
-#
-# === Variables
-#
-# === Examples
-#
-#  class { 'rbenv':  }
-#
-# === Authors
-#
-# Brendan O'Donnell <brendan.james.odonnell@gmail.com>
-#
-# === Copyright
-#
-# Copyright (C) 2012 Brendan O'Donnell
-#
-
 class ruby::params {
 
   $repo_path          = 'git://github.com/sstephenson/ruby-build.git'
