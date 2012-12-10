@@ -44,10 +44,15 @@ class rbenv {
   
   define setup($prefix, $profile_path, $user, $group) {
     
-    file { "${rbenv::params::install_dir}":
-      group => $group,
-      mode => 775,
-      recurse => true
+    #file { "${rbenv::params::install_dir}":
+    #  group => $group,
+    #  mode => 775,
+      #recurse => true
+    #}
+
+    exec {"chmod":
+      command => "chmod -R 775 ${rbenv::params::install_dir} && chown -R :${group} ${rbenv::params::install_dir}",
+      path => ["/bin", "/usr/bin", "/usr/local/bin"]
     }
   
     #file { [
