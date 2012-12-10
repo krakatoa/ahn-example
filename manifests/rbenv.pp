@@ -49,10 +49,17 @@ class rbenv {
     #  mode => 775,
       #recurse => true
     #}
+   
+    group { "rbenv":
+      ensure => "present",
+      notify => Exec["chmod"];
+    }
 
     exec {"chmod":
       command => "chmod -R 775 ${rbenv::params::install_dir} && chown -R :${group} ${rbenv::params::install_dir}",
-      path => ["/bin", "/usr/bin", "/usr/local/bin"]
+      path => ["/bin", "/usr/bin", "/usr/local/bin"],
+      refreshonly =>true,
+      subscribe => Group["rbenv"]
     }
   
     #file { [
@@ -66,10 +73,6 @@ class rbenv {
     #  group     => 'root',
     #  mode      => '0775'
     #}
-
-    group { "rbenv":
-      ensure => "present"
-    }
 
     user { "set user rbenv group ${group}":
       name => $user,
