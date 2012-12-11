@@ -1,12 +1,13 @@
 # encoding: utf-8
 
-require '../models/ivr'
+require '../models/ivysaur'
+require '../models/renderers/adhearsion_renderer'
 
 class IvrTesting < Adhearsion::CallController
   def run
     answer
 
-    ivr = Ivysaur::Ivr.new(Ivysaur::Ivr.testing)
+    ivr = Ivysaur::Ivr.new(Ivysaur::testing)
     ivr.renderer = AdhearsionRenderer.new(self)
     ivr.output
 
