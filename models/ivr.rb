@@ -3,55 +3,62 @@ class AdhearsionRenderer
     @call_controller = call_controller
   end
 
-  def ivr(attributes, actions, &block)
+  def ivr(attributes, actions, additionals={})
     renderer = self
     actions.each do |action|
-      action.output(renderer)
+      renderer.send(action.kind, action.attributes, action.actions, additionals)
+      #action.output({:renderer => renderer})
     end
   end
 
-  def menu(attributes, actions, &block)
+  def menu(attributes, actions, additionals={})
     renderer = self
     attributes[:timeout] = attributes[:timeout].to_i.seconds
     @call_controller.menu attributes do
       current_menu = self
-      #@call_controller.logger.info "This is inside a menu: #{self.inspect}"
+      @call_controller.logger.info "This is inside the menu, actions: #{actions.inspect}"
       actions.each do |action|
-        action.output(renderer) { current_menu }
+        renderer.send(action.kind, action.attributes, action.actions, {:current_menu => current_menu})
+        #from = action.attributes[:from].to_i
+        #to = action.attributes[:to].to_i
+        #match from..to do |lamb|
+        #  action.actions.each do |subaction|
+        #    subaction.output({:renderer => renderer, :lambda_match => lamb})
+        #  end
+        #end
+        # action.output({:renderer => renderer, :current_menu => current_menu})
       end
     end
   end
 
-  def match(attributes, actions, &block)
+  def match(attributes, actions, additionals={})
     renderer = self
-    current_menu = block.call if block_given?
-    #@call_controller.logger.info "Going to render a match block with: #{attributes.inspect} and this menu: #{current_menu}"
-    @call_controller.logger.info "actions: #{actions.inspect}"
-    current_menu.match 1..4 do |digit|
-      @call_controller.logger.info "entered: #{digit}"
-    end
-    current_menu.timeout {
-      @call_controller.logger.info "timeouted"
-    }
-=begin
-    current_menu.match attributes[:from]..attributes[:to] do |digit|
+    current_menu = additionals[:current_menu]
+    @call_controller.logger.info "Match actions: #{actions.inspect}"
+    @call_controller.logger.info "Match attributes: #{attributes.inspect}"
+    @call_controller.logger.info "Match additionals: #{additionals.inspect}"
+    from = attributes[:from]
+    to = attributes[:to]
+    current_menu.match from..to do |digit|
       actions.each do |action|
-        action.output(renderer) { digit }
+        # renderer.send(action.kind, action.attributes, {:lambda_match => digit})
+        action.output({:renderer => renderer, :lambda_match => digit})
       end
     end
-=end
   end
 
-  def logger(attributes, actions, &block)
+  def logger(attributes, actions, additionals={})
     # todo: ver que no sea necesario cargar el array actions en este logger
     # todo: ver en todos de agregar tanto @renderer, como variables de entorno tipo lambdas, o menues, o call_controller, en un parametro adicional
+    lambda_match = additionals[:lambda_match]
+
     renderer = self
     @call_controller.logger.info "inside logger"
-    attributes[:data].gsub!("$lambda_match", block.call) if block_given?
+    attributes[:data] = attributes[:data].gsub("$lambda_match", lambda_match) if lambda_match
     @call_controller.logger.info attributes[:data]
   end
 
-  def play(attributes, actions, &block)
+  def play(attributes, actions, additionals={})
     @call_controller.play *attributes[:sound]
   end
 end
@@ -112,9 +119,9 @@ class Ivysaur::Action
     @scope[:attributes]
   end
 
-  def output(renderer=nil, &block)
-    renderer ||= @renderer
-    renderer.send(kind, self.attributes, self.actions, &block)
+  def output(additionals={})
+    renderer = @renderer || additionals[:renderer]
+    renderer.send(kind, self.attributes, self.actions, additionals)
   end
 
   def actions
@@ -145,7 +152,7 @@ class Ivysaur::Ivr < Ivysaur::Action
         { :menu =>  {
                     :attributes => { :timeout => 8 },
                     :actions    => [
-                      { :play => { :attributes => { :sound => ["/home/krakatoa/mario3.wav"] } } },
+                      #{ :play => { :attributes => { :sound => ["/home/krakatoa/mario3.wav"] } } },
                       {
                         :match => { :attributes => { :from => 1, :to => 5 },
                                     :actions => [
@@ -156,12 +163,12 @@ class Ivysaur::Ivr < Ivysaur::Action
                                       }
                                     ]
                         }
-                      },
-                      {
-                        :menu => {  :attributes => { :timeout => 9 },
-                                    :actions => { }
-                        }
-                      }
+                      }#,
+                      #{
+                      #  :menu => {  :attributes => { :timeout => 9 },
+                      #              :actions => { }
+                      #  }
+                      #}
                     ]
           }
         }
@@ -189,10 +196,6 @@ class Ivysaur::Menu < Ivysaur::Action
   def kind
     :menu
   end
-
-  #def to_s
-  #  render
-  #end
 end
 
 class Ivysaur::Match < Ivysaur::Action
@@ -211,8 +214,4 @@ class Ivysaur::Play < Ivysaur::Action
   def kind
     :play
   end
-
-  #def to_s
-  #  render
-  #end
 end
