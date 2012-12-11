@@ -48,9 +48,9 @@ Adhearsion::Events.draw do
   # Register global handlers for events
   #
   # eg. Handling Punchblock events
-  punchblock do |event|
-    logger.info event.inspect
-  end
+  #punchblock do |event|
+  #  logger.info event.inspect
+  #end
   #
   # eg Handling PeerStatus AMI events
   # ami :name => 'PeerStatus' do |event|

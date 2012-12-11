@@ -1,8 +1,20 @@
 # encoding: utf-8
 
+require '../models/ivr'
+
 class IvrTesting < Adhearsion::CallController
   def run
     answer
+
+    ivr = Ivysaur::Ivr.new(Ivysaur::Ivr.testing)
+    ivr.renderer = AdhearsionRenderer.new(self)
+    ivr.output
+
+    #logger.info "methods: #{self.methods.sort}"
+
+=begin
+    record_result = record :max_duration => 60_000
+    logger.info "Recording saved to #{record_result.recording_uri}"
 
     hash_a = { "menu" =>
       { "timeout" => 8,
@@ -62,6 +74,7 @@ class IvrTesting < Adhearsion::CallController
       end
     end
 
+=end
   end
 
 end
