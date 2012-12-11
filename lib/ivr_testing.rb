@@ -7,6 +7,9 @@ class IvrTesting < Adhearsion::CallController
   def run
     answer
 
+    # call.to
+    # => "5588@10.0.0.5"
+
     ivr = Ivysaur::Ivr.new(Ivysaur::testing)
     ivr.renderer = AdhearsionRenderer.new(self)
     ivr.output
