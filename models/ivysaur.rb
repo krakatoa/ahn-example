@@ -1,11 +1,12 @@
-require '../models/ivysaur/action.rb'
-require '../models/ivysaur/ivr.rb'
-require '../models/ivysaur/menu.rb'
-require '../models/ivysaur/match.rb'
-require '../models/ivysaur/play.rb'
-require '../models/ivysaur/logger.rb'
+require_relative './ivysaur/action.rb'
+require_relative './ivysaur/ivr.rb'
+require_relative './ivysaur/menu.rb'
+require_relative './ivysaur/match.rb'
+require_relative './ivysaur/play.rb'
+require_relative './ivysaur/logger.rb'
 
 module Ivysaur
+  
   def self.testing
 
     {
