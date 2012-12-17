@@ -1,5 +1,5 @@
 module Ivrzer
-  class AdhearsionRunner
+  class Runner
     def initialize(ivr, call_controller=nil)
       @ivr = ivr
       @call_controller = call_controller
