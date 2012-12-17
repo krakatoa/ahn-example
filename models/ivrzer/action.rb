@@ -12,6 +12,10 @@ module Ivrzer
       #validate rules
     end
 
+    def next_action
+      @rules.select { |rule| rule.kind == :next }[0]
+    end
+
     def rules
       @rules
     end

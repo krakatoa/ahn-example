@@ -42,6 +42,11 @@ module Ivrzer
               },
               {
                 :kind => :match,
+                :conditions => { :digit => 5, :type => "digit" },
+                :reference_id => 5
+              },
+              {
+                :kind => :match,
                 :conditions => { :digit => 9, :type => "digit" },
                 :reference_id => 3
               }
@@ -51,7 +56,7 @@ module Ivrzer
             :id => 2,
             :kind => :play,
             :options => {
-              :sound => "mario3.wav"
+              :sound => "/home/krakatoa/mario3.wav"
             },
             :rules => []
           },
@@ -82,6 +87,16 @@ module Ivrzer
               }
             ]
           },
+          {
+            :id => 5,
+            :kind => :record,
+            :options => { :max_duration => 6 },
+            :rules => [
+              { :kind => :next,
+                :reference_id => 1
+              }
+            ]
+          }
         ]
       }
       Ivrzer::Ivr.new(hash)

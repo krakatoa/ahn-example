@@ -11,11 +11,8 @@ module Ivrzer
       begin
         current_action = @ivr.build_action(next_action_id)
         
-        # puts ""
         next_action_id = execute(current_action)
 
-        puts "NEXT_ACTION_ID: #{next_action_id}"
-        
         next_action_id ||= execute(Ivrzer::HangupAction.dummy)
       end while next_action_id > 0
 
@@ -30,16 +27,17 @@ module Ivrzer
       options[:timeout] = options[:timeout].to_i.seconds
       @call_controller.menu options do
         action.matches.each do |match_rule|
-          case match_rule.conditions[:type]
+          match_conditions = case match_rule.conditions[:type]
             when "digit"
-              match match_rule.conditions[:digit] do |digit|
-                return match_rule.reference_id
-              end
+              match_rule.conditions[:digit]
             when "range"
-              match match_rule.conditions[:from]..match_rule.conditions[:to] do
-                return match_rule.reference_id
-              end
+              match_rule.conditions[:from]..match_rule.conditions[:to]
           end
+
+          match match_conditions do |digit|
+            return match_rule.reference_id
+          end
+
         end
       end
 
@@ -47,17 +45,17 @@ module Ivrzer
     end
 
     def play(action)
-      puts "play: #{action.inspect}"
+      @call_controller.play *action.options[:sound]
       return action.next_action.reference_id rescue nil
     end
 
     def record(action)
-      puts "record: #{action.inspect}"
+      @call_controller.record action.options
       return action.next_action.reference_id rescue nil
     end
 
     def hangup(action)
-      puts "hangup: #{action.inspect}"
+      @call_controller.hangup
       return 0
     end
 
