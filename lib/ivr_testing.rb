@@ -1,7 +1,10 @@
 # encoding: utf-8
 
-require '../models/ivysaur'
-require '../models/renderers/adhearsion_renderer'
+#require '../models/ivysaur'
+#require '../models/renderers/adhearsion_renderer'
+
+require '../models/ivrzer.rb'
+require '../models/ivrzer/adhearsion_runner.rb'
 
 class IvrTesting < Adhearsion::CallController
   def run
@@ -10,9 +13,13 @@ class IvrTesting < Adhearsion::CallController
     # call.to
     # => "5588@10.0.0.5"
 
-    ivr = Ivysaur::Ivr.new(Ivysaur::testing)
-    ivr.renderer = AdhearsionRenderer.new(self)
-    ivr.output
+    #ivr = Ivysaur::Ivr.new(Ivysaur::testing)
+    #ivr.renderer = AdhearsionRenderer.new(self)
+    #ivr.output
+
+    ivr = Ivrzer::Ivr.example
+    runner = Ivrzer::AdhearsionRunner.new(ivr, self)
+    runner.run!
 
     #logger.info "methods: #{self.methods.sort}"
 

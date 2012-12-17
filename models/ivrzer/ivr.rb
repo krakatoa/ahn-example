@@ -1,22 +1,16 @@
 module Ivrzer
   class Ivr
-    attr_accessor :runner
     attr_reader :id
     attr_reader :name
     attr_reader :root_action_id
 
     def initialize(json)
       @hash = json # in this step, we should deserialize from simple JSON to Ruby hash
-      # @actions = Ivrzer::Action.build_actions_from_hash(hash[:actions])
 
       @id = @hash[:id]
       @name = @hash[:name]
       @root_action_id = @hash[:root_action_id]
     end
-
-    # def root_action
-    #   self.build_action(@root_action_id)
-    # end
 
     def build_action(action_id)
       action_hash = @hash[:actions].select { |action| action[:id] == action_id }[0]
