@@ -14,7 +14,7 @@ module Ivrzer
 
     def build_action(action_id)
       action_hash = @hash[:actions].select { |action| action[:id] == action_id }[0]
-      Kernel.const_get("Ivrzer").const_get("#{action_hash[:kind].to_s.capitalize}Action").new(action_hash)
+      Ivrzer::Action.build_action(action_hash)
     end
 
     def to_s

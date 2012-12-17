@@ -12,12 +12,16 @@ module Ivrzer
       #validate rules
     end
 
-    def next_action
-      @rules.select { |rule| rule.kind == :next }[0]
-    end
-
     def rules
       @rules
+    end
+    
+    def next_action_id
+      @rules.select { |rule| rule.kind == :next }[0].reference_id rescue nil
+    end
+
+    def self.build_action(action_hash)
+      Kernel.const_get("Ivrzer").const_get("#{action_hash[:kind].to_s.capitalize}Action").new(action_hash)
     end
   end
 end
