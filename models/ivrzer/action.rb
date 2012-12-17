@@ -7,9 +7,11 @@ module Ivrzer
       @kind = hash[:kind]
       @options = hash[:options]
 
-      #validate kind
-      @rules = Ivrzer::Rule.build_rules_from_array(hash[:rules] || [])
-      #validate rules
+      #validate options for this kind: add validation method on each Action subclass
+
+      hash[:rules] ||= []
+      @rules = hash[:rules].collect {|rule_hash| Ivrzer::Rule.new(rule_hash) }
+      # add rule method (e.g., build) that instantiates and validates the rule
     end
 
     def rules
