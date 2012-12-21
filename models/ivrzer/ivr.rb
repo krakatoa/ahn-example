@@ -28,27 +28,34 @@ module Ivrzer
         :actions => [
           { :id => 1,
             :kind => :menu,
-            :options => { :tries=>5, :timeout=>6 },
+            :options => { :tries=> 3, :timeout => 5 },
             :rules => [
-              { 
+              {
                 :kind => :match,
-                :conditions => { :from => 1, :to => 3, :type => "range" },
-                :reference_id => 2
+                :conditions => { :digit => 2, :type => "digit" },
+                :reference_id => 2 # mario + 1up
               },
               {
                 :kind => :match,
-                :conditions => { :digit => 4, :type => "digit" },
-                :reference_id => 4
+                :conditions => { :digit => 3, :type => "digit" },
+                :reference_id => 3 # 1up
+              },
+              {
+                :kind => :timeout,
+                :reference_id => 4 # luigi
+              },
+              {
+                :kind => :invalid,
+                :reference_id => 4 # luigi
+              },
+              {
+                :kind => :failure,
+                :reference_id => 5 # luigi + record
               },
               {
                 :kind => :match,
-                :conditions => { :digit => 5, :type => "digit" },
-                :reference_id => 5
-              },
-              {
-                :kind => :match,
-                :conditions => { :digit => 9, :type => "digit" },
-                :reference_id => 3
+                :conditions => { :pattern => "99*", :type => "pattern" },
+                :reference_id => 99
               }
             ]
           },
@@ -58,44 +65,65 @@ module Ivrzer
             :options => {
               :sound => "/home/krakatoa/mario3.wav"
             },
-            :rules => []
+            :rules => [
+            {
+              :kind => :next,
+              :reference_id => 3             }
+            ]
           },
           {
             :id => 3,
-            :kind => :hangup,
-            :options => {},
-            :rules => []
-          },
-          { :id => 4,
-            :kind => :menu,
-            :options => { :tries=>5, :timeout=>6 },
+            :kind => :play,
+            :options => {
+              :sound => "/home/krakatoa/1up.wav"
+            },
             :rules => [
-              { 
-                :kind => :match,
-                :conditions => { :digit => 1, :type => "digit" },
-                :reference_id => 1
-              },
-              { 
-                :kind => :match,
-                :conditions => { :digit => 2, :type => "digit" },
-                :reference_id => 2
-              },
-              { 
-                :kind => :match,
-                :conditions => { :digit => 3, :type => "digit" },
+            #{
+            #  :kind => :next,
+            #  :reference_id => 2 }
+            ]
+          },
+          {
+            :id => 4,
+            :kind => :play,
+            :options => {
+              :sound => "/home/krakatoa/luigi.wav"
+            },
+            :rules => [
+            #{
+            #  :kind => :next,
+            #  :reference_id => 5
+            #}
+            ]
+          },
+          {
+            :id => 5,
+            :kind => :play,
+            :options => {
+              :sound => "/home/krakatoa/1up.wav"
+            },
+            :rules => [
+            {
+              :kind => :next,
+              :reference_id => 6
+            }
+            ]
+          },
+          {
+            :id => 6,
+            :kind => :record,
+            :options => { :max_duration => 30, :interruptible => false },
+            :rules => [
+              { :kind => :next,
                 :reference_id => 3
               }
             ]
           },
           {
-            :id => 5,
-            :kind => :record,
-            :options => { :max_duration => 6 },
-            :rules => [
-              { :kind => :next,
-                :reference_id => 1
-              }
-            ]
+            :id => 99,
+            :kind => :hangup,
+            :options => {},
+            :rules => []
           }
         ]
       }
