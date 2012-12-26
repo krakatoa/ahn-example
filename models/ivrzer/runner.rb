@@ -29,7 +29,8 @@ module Ivrzer
     def menu(action)
       options = action.options
       options[:timeout] = options[:timeout].to_i.seconds
-      @call_controller.menu options do
+      sounds = options.delete(:sounds)
+      @call_controller.menu *sounds, options do
         action.matches.each do |match_rule|
           match_conditions = case match_rule.conditions[:type]
             when "digit"
@@ -64,13 +65,40 @@ module Ivrzer
     end
 
     def play(action)
-      @call_controller.play *action.options[:sound]
+      @call_controller.play *action.options[:sounds]
       return action.next_action_id
     end
 
     def record(action)
       @call_controller.record action.options
       return action.next_action_id
+    end
+
+    def dial(action)
+      options = action.options
+      options[:to] = options.delete(:destinations)
+
+      count = 0
+      tries = 3
+
+      while count < tries
+        status = @call_controller.dial options[:to], :for => 10.seconds, :from => "1000"
+      
+        case status.result
+          when :answer
+            return action.next_action_id
+          when :error, :timeout, :no_answer
+            run_chain(4)
+            count += 1
+        end
+      end
+
+      return action.next_action_id
+      
+
+      # fork action according status.result
+
+      # return action.next_action_id
     end
 
     def hangup(action)

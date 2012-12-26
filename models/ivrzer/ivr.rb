@@ -10,6 +10,8 @@ module Ivrzer
       @id = @hash[:id]
       @name = @hash[:name]
       @root_action_id = @hash[:root_action_id]
+
+      @variables = {}
     end
 
     def build_action(action_id)
@@ -28,7 +30,8 @@ module Ivrzer
         :actions => [
           { :id => 1,
             :kind => :menu,
-            :options => { :tries=> 3, :timeout => 5 },
+            :options => { :sounds => ["/home/krakatoa/mario3.wav"], :tries=> 3, :timeout => 5 },
+            #:options => { :tries=> 3, :timeout => 5 },
             :rules => [
               {
                 :kind => :match,
@@ -39,6 +42,11 @@ module Ivrzer
                 :kind => :match,
                 :conditions => { :digit => 3, :type => "digit" },
                 :reference_id => 3 # 1up
+              },
+              {
+                :kind => :match,
+                :conditions => { :digit => 7, :type => "digit"},
+                :reference_id => 7
               },
               {
                 :kind => :timeout,
@@ -63,7 +71,7 @@ module Ivrzer
             :id => 2,
             :kind => :play,
             :options => {
-              :sound => "/home/krakatoa/mario3.wav"
+              :sounds => ["/home/krakatoa/mario3.wav"]
             },
             :rules => [
             {
@@ -75,7 +83,7 @@ module Ivrzer
             :id => 3,
             :kind => :play,
             :options => {
-              :sound => "/home/krakatoa/1up.wav"
+              :sounds => ["/home/krakatoa/1up.wav"]
             },
             :rules => [
             #{
@@ -87,7 +95,7 @@ module Ivrzer
             :id => 4,
             :kind => :play,
             :options => {
-              :sound => "/home/krakatoa/luigi.wav"
+              :sounds => ["/home/krakatoa/luigi.wav"]
             },
             :rules => [
             #{
@@ -100,7 +108,7 @@ module Ivrzer
             :id => 5,
             :kind => :play,
             :options => {
-              :sound => "/home/krakatoa/1up.wav"
+              :sounds => ["/home/krakatoa/1up.wav"]
             },
             :rules => [
             {
@@ -118,6 +126,17 @@ module Ivrzer
                 :reference_id => 3
               }
             ]
+          },
+          {
+            :id => 7,
+            :kind => :dial,
+            :options => {
+              :destinations => ["user/1001"]
+              #:destinations => ["sofia/internal/1001@10.0.0.5:5060"]
+            },
+            :rules => [
+            {:kind => :next, :reference_id => 5}
+            ],
           },
           {
             :id => 99,
